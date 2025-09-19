@@ -4,7 +4,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-const mysql = require('mysql2'); // <-- NEW: Import the MySQL library
 
 const app = express();
 const port = 5000;
@@ -22,23 +21,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// NEW: Create a connection to the database
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
-
-// NEW: Connect to the database
-db.connect(err => {
-    if (err) {
-        console.error('Database connection failed:', err.stack);
-        return;
-    }
-    console.log('Connected to MySQL database as id ' + db.threadId);
-});
-
 // API endpoint for the contact form
 app.post('/api/contact', (req, res) => {
   const { name, email, message } = req.body;
@@ -50,7 +32,7 @@ app.post('/api/contact', (req, res) => {
   // Email content
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: process.env.EMAIL_USER,
+    to: process.env.EMAIL_USER, // Sends the email to yourself
     subject: `New Contact Form Submission from ${name}`,
     html: `
       <h2>New Message from Your Portfolio</h2>
@@ -70,18 +52,6 @@ app.post('/api/contact', (req, res) => {
     console.log('Message sent: %s', info.messageId);
     res.status(200).json({ message: 'Message sent successfully!' });
   });
-});
-
-// NEW: API endpoint to get all projects from the database
-app.get('/api/projects', (req, res) => {
-    const sql = 'SELECT * FROM projects';
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('Error fetching projects:', err);
-            return res.status(500).send('Error fetching data');
-        }
-        res.json(results);
-    });
 });
 
 // Start the server
