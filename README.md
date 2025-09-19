@@ -76,7 +76,7 @@ This is the backend server for my personal portfolio website, responsible for ha
 ## 🌐 Live URL
 
 This backend is deployed and available at:
-**[https://[Your-Render-URL].onrender.com]**
+**[https://my-portfolio-backend-zu90.onrender.com]**
 
 ---
 
